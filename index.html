@@ -1,237 +1,50 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>LapiGift Premium</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root {
-            --bg-color: #0d0d12;
-            --card-color: #1a1a22;
-            --accent-blue: #3b82f6;
-            --ton-blue: #0088cc;
-            --stars-gold: #f5a623;
-            --text-main: #ffffff;
-            --text-gray: #7e839f;
-            --border: #25252e;
-            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        body {
-            background-color: var(--bg-color); color: var(--text-main);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            margin: 0; padding: 0; padding-bottom: 90px;
-            -webkit-user-select: none; -webkit-tap-highlight-color: transparent;
-            overflow-x: hidden;
-        }
-
-        /* Верхняя панель */
-        .header {
-            padding: 16px; display: flex; justify-content: space-between; align-items: center;
-        }
-        .header-btn {
-            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-            width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
-        }
-
-        /* Профиль */
-        .profile-section { text-align: center; margin: 20px 0; }
-        #user-avatar {
-            width: 88px; height: 88px; border-radius: 50%;
-            border: 3px solid var(--accent-blue); background: #222; margin-bottom: 12px;
-        }
-        #user-username { font-weight: 700; font-size: 19px; }
-
-        /* Блок Баланса */
-        .balance-card {
-            background: var(--card-color); border-radius: 20px; border: 1px solid var(--border);
-            margin: 16px; padding: 20px;
-        }
-        .bal-label { color: var(--text-gray); font-size: 13px; text-transform: uppercase; margin-bottom: 8px; }
-        .bal-value { font-size: 28px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
-        .bal-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
-        
-        .btn {
-            border: none; border-radius: 14px; padding: 14px;
-            font-weight: 700; font-size: 15px; text-align: center;
-            transition: var(--transition);
-        }
-        .btn:active { transform: scale(0.96); }
-        
-        .btn-blue { background: var(--accent-blue); color: white; }
-        .btn-gray { background: rgba(255,255,255,0.05); color: var(--text-main); }
-
-        /* Список кнопок */
-        .menu-list { margin: 16px; }
-        .menu-item {
-            background: var(--card-color); border-radius: 16px; border: 1px solid var(--border);
-            padding: 16px; margin-bottom: 10px;
-            display: flex; justify-content: space-between; align-items: center;
-            transition: var(--transition);
-        }
-        .menu-item:active { background: rgba(255,255,255,0.03); }
-        .menu-item-left { display: flex; align-items: center; gap: 12px; font-weight: 600; font-size: 15px; }
-
-        /* Нижнее меню */
-        .navbar {
-            position: fixed; bottom: 0; width: 100%;
-            background: rgba(26, 26, 34, 0.9); border-top: 1px solid var(--border);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            display: flex; justify-content: space-around; padding: 12px 0 30px 0;
-            z-index: 1000;
-        }
-        .nav-item { color: var(--text-gray); font-size: 11px; text-align: center; transition: var(--transition); }
-        .nav-item.active { color: var(--accent-blue); }
-        .nav-icon { font-size: 22px; margin-bottom: 4px; display: block; }
-
-        /* Модальные окна */
-        .modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
-            display: flex; align-items: center; justify-content: center;
-            opacity: 0; pointer-events: none; transition: var(--transition); z-index: 2000;
-        }
-        .modal.open { opacity: 1; pointer-events: auto; }
-        .modal-content {
-            background: var(--card-color); border: 1px solid var(--border);
-            width: 85%; border-radius: 28px; padding: 24px; text-align: center;
-            transform: scale(0.9); transition: var(--transition);
-        }
-        .modal.open .modal-content { transform: scale(1); }
-
-        .method-item {
-            display: flex; gap: 12px; align-items: center;
-            background: rgba(255,255,255,0.03); border-radius: 14px;
-            padding: 12px; margin-top: 10px; border: 1px solid transparent;
-        }
-        .method-item:active { border-color: var(--accent-blue); background: rgba(59, 130, 246, 0.1); }
-        .icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;}
-        .ton-icon { background: rgba(0, 136, 204, 0.1); color: var(--ton-blue); }
-        .stars-icon { background: rgba(245, 166, 35, 0.1); color: var(--stars-gold); }
-
-        .screens { display: none; }
-        .screen-active { display: block; }
+        :root { --bg: #0d1117; --card: #161b22; --blue: #2f81f7; --text: #ffffff; --gray: #8b949e; }
+        body { background: var(--bg); color: var(--text); font-family: sans-serif; margin: 0; padding: 15px; text-align: center; }
+        .avatar { width: 80px; height: 80px; border-radius: 20px; border: 2px solid var(--blue); margin-top: 10px; }
+        .lvl { background: var(--blue); padding: 2px 10px; border-radius: 5px; font-size: 12px; display: inline-block; margin: 10px 0; }
+        .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 20px 0; }
+        .card { background: var(--card); padding: 15px; border-radius: 15px; }
+        .invite { background: var(--blue); padding: 20px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .drop { background: rgba(255,255,255,0.05); border: 1px dashed var(--gray); border-radius: 20px; height: 100px; margin-top: 10px; display: flex; align-items: center; justify-content: center; color: var(--gray); }
+        .nav { position: fixed; bottom: 0; left: 0; width: 100%; background: var(--bg); display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid var(--card); }
     </style>
 </head>
 <body>
-
-    <div id="screen-profile" class="screens screen-active">
-        <div class="header">
-            <div class="header-btn" onclick="alert('Настройки')">⚙️</div>
-            <div id="top-bal" style="display:flex; align-items:center; gap:6px;">💎 <span class="user-balance">0.00</span></div>
-        </div>
-
-        <div class="profile-section">
-            <img id="user-avatar" src="" alt="">
-            <div id="user-username">Загрузка...</div>
-        </div>
-
-        <div class="balance-card">
-            <div class="bal-label">Ваш баланс</div>
-            <div class="bal-value">💎 <span class="user-balance">0.00</span></div>
-            <div class="bal-btns">
-                <button class="btn btn-blue" onclick="openModal()">Пополнить</button>
-                <button class="btn btn-gray" onclick="alert('Кошелек')">💳</button>
-            </div>
-        </div>
-
-        <div class="menu-list">
-            <div class="menu-item">
-                <div class="menu-item-left">🎁 Подарки</div>
-                <div style="color: var(--text-gray); font-weight:700;">→</div>
-            </div>
-            <div class="menu-item">
-                <div class="menu-item-left">👥 Реферальная система</div>
-                <div style="color: var(--text-gray); font-weight:700;">→</div>
-            </div>
-            <div class="menu-item">
-                <div class="menu-item-left">🌐 Сменить язык</div>
-                <div style="display:flex; align-items:center; gap:8px; color: var(--text-gray);">RU →</div>
-            </div>
-        </div>
+    <img id="u_av" class="avatar">
+    <div id="u_nm" style="font-weight: bold; margin-top: 5px;">User</div>
+    <div class="lvl">1 LEVEL</div>
+    <div id="u_id" style="color: var(--gray); font-size: 12px;">ID: 0</div>
+    <div class="stats">
+        <div class="card" onclick="alert('Вывод от 500 STARS')">БАЛАНС<br>1 ⭐</div>
+        <div class="card">РЕФЕРАЛЫ<br>0 👤</div>
     </div>
-
-    <div id="screen-top" class="screens">
-        <div class="header"><div class="screen-title" style="font-weight:700; font-size:20px;">🏆 Топ игроков</div></div>
+    <div class="invite" onclick="copyRef()">
+        <div style="text-align: left;"><b>ПРИГЛАСИТЬ ДРУГА</b><br><small>Бонус 5% с депов</small></div>
+        <div style="font-size: 20px;">+</div>
     </div>
-    <div id="screen-cases" class="screens">
-        <div class="header"><div class="screen-title" style="font-weight:700; font-size:20px;">📦 Кейсы</div></div>
-    </div>
-
-    <div class="navbar">
-        <div class="nav-item" onclick="showScreen('top')"><span class="nav-icon">🏆</span>Топ</div>
-        <div class="nav-item" onclick="showScreen('cases')"><span class="nav-icon">📦</span>Кейсы</div>
-        <div class="nav-item active" id="nav-profile" onclick="showScreen('profile')"><span class="nav-icon">👤</span>Профиль</div>
-    </div>
-
-    <div class="modal" id="pay-modal">
-        <div class="modal-content">
-            <div style="font-size: 32px; margin-bottom: 12px;">💸</div>
-            <h3 style="margin: 0; font-size: 20px;">Выбор метода</h3>
-            <p style="color: var(--text-gray); font-size: 13px; margin: 8px 0 16px 0;">Автоматическое зачисление баланса</p>
-            
-            <div class="method-item" onclick="payWithStars()">
-                <div class="icon stars-icon">⭐</div>
-                <div style="text-align:left;">
-                    <div style="font-weight:600;">Telegram Stars</div>
-                    <div style="font-size:12px; color: var(--text-gray);">Мгновенно, комиссии нет</div>
-                </div>
-            </div>
-
-            <div class="method-item" onclick="copyTonWallet()">
-                <div class="icon ton-icon">💎</div>
-                <div style="text-align:left;">
-                    <div style="font-weight:600;">TON Coin</div>
-                    <div style="font-size:12px; color: var(--text-gray);">UQA497...yOsV (нажми скопировать)</div>
-                </div>
-            </div>
-            
-            <button class="btn btn-gray" style="margin-top: 18px; width: 100%;" onclick="closeModal()">Отмена</button>
-        </div>
-    </div>
-
+    <div style="text-align: left; margin-top: 20px; font-size: 12px; color: var(--gray);">⚡ ЛУЧШИЙ ДРОП</div>
+    <div class="drop">ПОКА НЕТ ДРОПОВ</div>
+    <div class="nav"><span>🏠</span><span>🏆</span><span style="color: var(--blue);">👤</span></div>
     <script>
-        let tg = window.Telegram.WebApp;
+        const tg = window.Telegram.WebApp;
+        const user = tg.initDataUnsafe.user;
+        if(user) {
+            document.getElementById('u_nm').innerText = user.first_name;
+            document.getElementById('u_id').innerText = 'ID: ' + user.id;
+            document.getElementById('u_av').src = user.photo_url || 'https://via.placeholder.com/80';
+        }
+        function copyRef() {
+            navigator.clipboard.writeText('https://t.me/ТВОЙ_БОТ?start=' + user.id);
+            tg.showAlert('Ссылка скопирована!');
+        }
         tg.expand();
-        tg.headerColor = "#0d0d12";
-
-        // Получаем данные юзера
-        const user = tg.initDataUnsafe?.user;
-        if (user) {
-            document.getElementById('user-username').innerText = (user.username ? '@' + user.username : user.first_name);
-            if (user.photo_url) {
-                document.getElementById('user-avatar').src = user.photo_url;
-            } else {
-                document.getElementById('user-avatar').src = `https://ui-avatars.com/api/?name=${user.first_name}&background=3b82f6&color=fff&rounded=true&bold=true`;
-            }
-        }
-
-        function showScreen(name) {
-            document.querySelectorAll('.screens').forEach(s => s.classList.remove('screen-active'));
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            document.getElementById('screen-'+name).classList.add('screen-active');
-            if(name === 'profile') document.getElementById('nav-profile').classList.add('active');
-        }
-
-        const modal = document.getElementById('pay-modal');
-        function openModal() { modal.classList.add('open'); }
-        function closeModal() { modal.classList.remove('open'); }
-
-        // АВТОМАТ STARS: Шлем боту запрос на инвойс
-        function payWithStars() {
-            tg.sendData("pay_stars");
-            closeModal();
-            tg.close(); // Временно закрываем апп, чтобы бот прислал инвойс
-        }
-
-        // ТОН: Красивое копирование кошелька
-        function copyTonWallet() {
-            const addr = "UQA497cKZr3vw-Dkb7HY306QGcYCMBQ1NDTVAmzf0TBytOsV";
-            navigator.clipboard.writeText(addr);
-            tg.showAlert("Адрес скопирован! Баланс будет зачислен вручную (бонус за TON)");
-            closeModal();
-        }
     </script>
 </body>
 </html>
