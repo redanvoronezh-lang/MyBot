@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LapiGift</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-color: #050509;
+            --card-bg: #101118;
+            --accent-blue: #007bff;
+            --text-main: #ffffff;
+            --text-secondary: #5c607a;
+            --border: #1a1c29;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            overflow-x: hidden;
+        }
+
+        /* Шапка */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            position: sticky;
+            top: 0;
+            background: var(--bg-color);
+            z-index: 10;
+        }
+
+        .balance-pill {
+            background: var(--card-bg);
+            padding: 6px 12px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid var(--border);
+            font-weight: bold;
+        }
+
+        /* Экраны */
+        .screen { display: none; padding: 15px; padding-bottom: 100px; }
+        .screen.active { display: block; }
+
+        /* Профиль */
+        .profile-header {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 25px;
+            text-align: center;
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        #user-photo {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            margin-bottom: 12px;
+            border: 2px solid var(--accent-blue);
+            background: #222;
+        }
+
+        .user-name { font-size: 20px; font-weight: 700; margin-bottom: 15px; }
+
+        .btn-action {
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 12px;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Блоки */
+        .card-block {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 15px;
+            border: 1px solid var(--border);
+            margin-bottom: 15px;
+        }
+
+        .card-title { color: var(--text-secondary); font-size: 14px; margin-bottom: 12px; text-transform: uppercase; }
+
+        input {
+            background: #08090d;
+            border: 1px solid var(--border);
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            width: 100%;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        /* Кейсы */
+        .case-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .case-card {
+            background: var(--card-bg);
+            border-radius: 18px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+
+        .case-card img { width: 100%; height: auto; margin-bottom: 10px; }
+        .case-price { color: #f39c12; font-weight: bold; margin-top: 5px; }
+
+        /* Навигация */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: rgba(16, 17, 24, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0 25px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .nav-item {
+            color: var(--text-secondary);
+            font-size: 11px;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .nav-item.active { color: var(--accent-blue); }
+        .nav-icon { font-size: 20px; }
+
+        /* Пополнение */
+        .method-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #161720;
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div id="display-name" style="font-weight: 500;">Загрузка...</div>
+        <div class="balance-pill">💎 <span id="user-balance">0.00</span> <span onclick="showScreen('deposit')" style="color:var(--accent-blue); font-size: 20px;">+</span></div>
+    </div>
+
+    <div id="profile" class="screen active">
+        <div class="profile-header">
+            <img id="user-photo" src="" alt="">
+            <div class="user-name" id="user-full-name">Пользователь</div>
+            <button class="btn-action" onclick="window.Telegram.WebApp.openTelegramLink('https://t.me/lapigift_sup_bot')">📩 Поддержка</button>
+        </div>
+
+        <div class="card-block">
+            <div class="card-title">Активировать промокод</div>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="promo-input" placeholder="Введите промокод">
+                <button onclick="applyPromo()" style="background: #2ecc71; border:none; color:white; border-radius:10px; padding:0 15px;">OK</button>
+            </div>
+        </div>
+
+        <div class="card-block">
+            <div class="card-title">Инвентарь</div>
+            <div style="text-align: center; color: var(--text-secondary); padding: 20px;">Нет доступных подарков</div>
+        </div>
+    </div>
+
+    <div id="cases" class="screen">
+        <h3 style="margin-bottom: 15px;">Уникальные</h3>
+        <div class="case-grid">
+            <div class="case-card"><img src="https://via.placeholder.com/120x80/222/fff?text=BICHUGAN"><div>BICHUGAN</div><div class="case-price">0.5 TON</div></div>
+            <div class="case-card"><img src="https://via.placeholder.com/120x80/222/fff?text=SPRING"><div>SPRING</div><div class="case-price">0.9 TON</div></div>
+            <div class="case-card"><img src="https://via.placeholder.com/120x80/222/fff?text=ELITE"><div>ELITE</div><div class="case-price">5.0 TON</div></div>
+            <div class="case-card"><img src="https://via.placeholder.com/120x80/222/fff?text=PROMO"><div>PROMO</div><div class="case-price">FREE</div></div>
+        </div>
+    </div>
+
+    <div id="deposit" class="screen">
+        <h3>Пополнение баланса</h3>
+        <div class="method-card" onclick="alert('Оплата на кошелек: UQA497cKZr3vw-Dkb7HY306QGcYCMBQ1NDTVAmzf0TBytOsV')">
+            <div><strong>TON Coin</strong><br><small style="color:var(--text-secondary)">Минимум 0.10 TON</small></div>
+            <div style="color:var(--accent-blue)">Выбрать</div>
+        </div>
+        <div class="method-card">
+            <div><strong>Telegram Stars</strong><br><small style="color:var(--text-secondary)">Заморозка вывода 21 день</small></div>
+            <div style="color:var(--accent-blue)">Выбрать</div>
+        </div>
+    </div>
+
+    <div id="bonuses" class="screen">
+        <h3>Партнерская программа</h3>
+        <div class="card-block">
+            <div style="font-size: 24px; font-weight: bold;">0</div>
+            <div style="color:var(--text-secondary)">Приглашено друзей</div>
+        </div>
+        <div class="card-block">
+            <div style="font-size: 24px; font-weight: bold;">0 TON</div>
+            <div style="color:var(--text-secondary)">Заработано</div>
+        </div>
+        <button class="btn-action" onclick="copyReferral()">🔗 Пригласить друзей</button>
+    </div>
+
+    <div class="nav-bar">
+        <div class="nav-item" onclick="showScreen('cases')"><span class="nav-icon">🎮</span>Кейсы</div>
+        <div class="nav-item" onclick="showScreen('bonuses')"><span class="nav-icon">💎</span>Бонусы</div>
+        <div class="nav-item active" onclick="showScreen('profile')"><span class="nav-icon">👤</span>Профиль</div>
+    </div>
+
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.expand();
+
+        // Подгружаем данные пользователя
+        const user = tg.initDataUnsafe?.user;
+        if (user) {
+            document.getElementById('display-name').innerText = user.first_name;
+            document.getElementById('user-full-name').innerText = user.first_name + (user.last_name ? ' ' + user.last_name : '');
+            if (user.photo_url) {
+                document.getElementById('user-photo').src = user.photo_url;
+            } else {
+                document.getElementById('user-photo').src = "https://ui-avatars.com/api/?name=" + user.first_name + "&background=007bff&color=fff";
+            }
+        }
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            document.getElementById(screenId).classList.add('active');
+            // Подсветка иконки
+            const navItems = document.querySelectorAll('.nav-item');
+            if(screenId === 'cases') navItems[0].classList.add('active');
+            if(screenId === 'bonuses') navItems[1].classList.add('active');
+            if(screenId === 'profile') navItems[2].classList.add('active');
+        }
+
+        function copyReferral() {
+            const dummy = document.createElement('input');
+            const text = "https://t.me/ТВОЙ_БОТ?start=" + user.id;
+            document.body.appendChild(dummy);
+            dummy.value = text;
+            dummy.select();
+            document.execCommand('copy');
+            document.body.removeChild(dummy);
+            tg.showAlert("Ссылка скопирована!");
+        }
+
+        function applyPromo() {
+            const promo = document.getElementById('promo-input').value;
+            if(promo) {
+                tg.showAlert("Промокод " + promo + " будет проверен после настройки админ-панели.");
+            }
+        }
+    </script>
+</body>
+</html>
