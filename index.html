@@ -2,259 +2,235 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LapiGift</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>LapiGift Premium</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg-color: #05060e;
-            --card-bg: #0d0f1a;
+            --bg-color: #0d0d12;
+            --card-color: #1a1a22;
             --accent-blue: #3b82f6;
+            --ton-blue: #0088cc;
+            --stars-gold: #f5a623;
             --text-main: #ffffff;
             --text-gray: #7e839f;
-            --border-color: #1c1f2e;
+            --border: #25252e;
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+            background-color: var(--bg-color); color: var(--text-main);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0; padding: 0; padding-bottom: 90px;
+            -webkit-user-select: none; -webkit-tap-highlight-color: transparent;
             overflow-x: hidden;
         }
 
-        /* Контейнер приложения */
-        .app-container { padding: 16px; padding-bottom: 90px; }
-
-        /* Шапка с балансом */
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+        /* Верхняя панель */
+        .header {
+            padding: 16px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .header-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+            width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
         }
 
-        .balance-box {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            padding: 8px 14px;
-            border-radius: 100px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-weight: 600;
-        }
-
-        .add-funds { color: var(--accent-blue); font-size: 20px; padding-left: 5px; cursor: pointer; }
-
-        /* Карточка профиля */
-        .user-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 24px;
-            padding: 24px;
-            text-align: center;
-            margin-bottom: 16px;
-        }
-
+        /* Профиль */
+        .profile-section { text-align: center; margin: 20px 0; }
         #user-avatar {
-            width: 84px;
-            height: 84px;
-            border-radius: 50%;
-            border: 2px solid var(--accent-blue);
-            margin-bottom: 12px;
-            background: #222;
+            width: 88px; height: 88px; border-radius: 50%;
+            border: 3px solid var(--accent-blue); background: #222; margin-bottom: 12px;
         }
+        #user-username { font-weight: 700; font-size: 19px; }
 
-        .user-name { font-size: 20px; font-weight: 700; margin-bottom: 16px; }
-
-        .btn-support {
-            background: var(--accent-blue);
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 14px;
-            width: 100%;
-            font-size: 15px;
-            font-weight: 600;
+        /* Блок Баланса */
+        .balance-card {
+            background: var(--card-color); border-radius: 20px; border: 1px solid var(--border);
+            margin: 16px; padding: 20px;
         }
-
-        /* Секции (Промокод, Инвентарь) */
-        .section-block {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 16px;
-            margin-bottom: 16px;
+        .bal-label { color: var(--text-gray); font-size: 13px; text-transform: uppercase; margin-bottom: 8px; }
+        .bal-value { font-size: 28px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+        .bal-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+        
+        .btn {
+            border: none; border-radius: 14px; padding: 14px;
+            font-weight: 700; font-size: 15px; text-align: center;
+            transition: var(--transition);
         }
+        .btn:active { transform: scale(0.96); }
+        
+        .btn-blue { background: var(--accent-blue); color: white; }
+        .btn-gray { background: rgba(255,255,255,0.05); color: var(--text-main); }
 
-        .section-title { color: var(--text-gray); font-size: 13px; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px; }
-
-        .promo-input-group { display: flex; gap: 8px; }
-        input {
-            flex: 1;
-            background: #05060e;
-            border: 1px solid var(--border-color);
-            color: white;
-            padding: 12px;
-            border-radius: 12px;
-            outline: none;
+        /* Список кнопок */
+        .menu-list { margin: 16px; }
+        .menu-item {
+            background: var(--card-color); border-radius: 16px; border: 1px solid var(--border);
+            padding: 16px; margin-bottom: 10px;
+            display: flex; justify-content: space-between; align-items: center;
+            transition: var(--transition);
         }
-
-        .btn-ok { background: #22c55e; border: none; color: white; padding: 0 16px; border-radius: 12px; font-weight: bold; }
-
-        /* Сетка кейсов */
-        .case-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-        .case-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 16px;
-            text-align: center;
-        }
-        .case-card img { width: 100%; height: auto; border-radius: 12px; margin-bottom: 8px; }
-        .case-name { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
-        .case-price { color: #f59e0b; font-weight: 700; font-size: 13px; }
+        .menu-item:active { background: rgba(255,255,255,0.03); }
+        .menu-item-left { display: flex; align-items: center; gap: 12px; font-weight: 600; font-size: 15px; }
 
         /* Нижнее меню */
-        .nav-menu {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background: rgba(13, 15, 26, 0.9);
-            backdrop-filter: blur(15px);
-            display: flex;
-            justify-content: space-around;
-            padding: 12px 0 30px 0;
-            border-top: 1px solid var(--border-color);
+        .navbar {
+            position: fixed; bottom: 0; width: 100%;
+            background: rgba(26, 26, 34, 0.9); border-top: 1px solid var(--border);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            display: flex; justify-content: space-around; padding: 12px 0 30px 0;
+            z-index: 1000;
         }
-
-        .nav-item { color: var(--text-gray); text-align: center; font-size: 11px; cursor: pointer; }
+        .nav-item { color: var(--text-gray); font-size: 11px; text-align: center; transition: var(--transition); }
         .nav-item.active { color: var(--accent-blue); }
-        .nav-icon { font-size: 22px; display: block; margin-bottom: 4px; }
+        .nav-icon { font-size: 22px; margin-bottom: 4px; display: block; }
 
-        .screen { display: none; }
-        .active-screen { display: block; }
+        /* Модальные окна */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: var(--transition); z-index: 2000;
+        }
+        .modal.open { opacity: 1; pointer-events: auto; }
+        .modal-content {
+            background: var(--card-color); border: 1px solid var(--border);
+            width: 85%; border-radius: 28px; padding: 24px; text-align: center;
+            transform: scale(0.9); transition: var(--transition);
+        }
+        .modal.open .modal-content { transform: scale(1); }
+
+        .method-item {
+            display: flex; gap: 12px; align-items: center;
+            background: rgba(255,255,255,0.03); border-radius: 14px;
+            padding: 12px; margin-top: 10px; border: 1px solid transparent;
+        }
+        .method-item:active { border-color: var(--accent-blue); background: rgba(59, 130, 246, 0.1); }
+        .icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;}
+        .ton-icon { background: rgba(0, 136, 204, 0.1); color: var(--ton-blue); }
+        .stars-icon { background: rgba(245, 166, 35, 0.1); color: var(--stars-gold); }
+
+        .screens { display: none; }
+        .screen-active { display: block; }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
-        <div class="top-bar">
-            <div id="top-username" style="font-weight: 600; font-size: 15px;">...</div>
-            <div class="balance-box">
-                💎 <span>0.00</span>
-                <span class="add-funds" onclick="showScreen('deposit')">+</span>
+    <div id="screen-profile" class="screens screen-active">
+        <div class="header">
+            <div class="header-btn" onclick="alert('Настройки')">⚙️</div>
+            <div id="top-bal" style="display:flex; align-items:center; gap:6px;">💎 <span class="user-balance">0.00</span></div>
+        </div>
+
+        <div class="profile-section">
+            <img id="user-avatar" src="" alt="">
+            <div id="user-username">Загрузка...</div>
+        </div>
+
+        <div class="balance-card">
+            <div class="bal-label">Ваш баланс</div>
+            <div class="bal-value">💎 <span class="user-balance">0.00</span></div>
+            <div class="bal-btns">
+                <button class="btn btn-blue" onclick="openModal()">Пополнить</button>
+                <button class="btn btn-gray" onclick="alert('Кошелек')">💳</button>
             </div>
         </div>
 
-        <div id="profile-screen" class="screen active-screen">
-            <div class="user-card">
-                <img id="user-avatar" src="" alt="">
-                <div class="user-name" id="full-name">Загрузка...</div>
-                <button class="btn-support" onclick="tg.openTelegramLink('https://t.me/lapigift_sup_bot')">📩 Поддержка</button>
+        <div class="menu-list">
+            <div class="menu-item">
+                <div class="menu-item-left">🎁 Подарки</div>
+                <div style="color: var(--text-gray); font-weight:700;">→</div>
             </div>
-
-            <div class="section-block">
-                <div class="section-title">Активировать промокод</div>
-                <div class="promo-input-group">
-                    <input type="text" placeholder="Введите промокод">
-                    <button class="btn-ok">OK</button>
-                </div>
+            <div class="menu-item">
+                <div class="menu-item-left">👥 Реферальная система</div>
+                <div style="color: var(--text-gray); font-weight:700;">→</div>
             </div>
-
-            <div class="section-block">
-                <div class="section-title">Инвентарь</div>
-                <div style="text-align: center; color: var(--text-gray); padding: 10px;">Пусто</div>
-            </div>
-        </div>
-
-        <div id="cases-screen" class="screen">
-            <div class="section-title">Доступные кейсы</div>
-            <div class="case-grid">
-                <div class="case-card">
-                    <img src="https://via.placeholder.com/150x100/1c1f2e/fff?text=BICHUGAN" alt="">
-                    <div class="case-name">BICHUGAN</div>
-                    <div class="case-price">0.5 TON</div>
-                </div>
-                <div class="case-card">
-                    <img src="https://via.placeholder.com/150x100/1c1f2e/fff?text=SPRING" alt="">
-                    <div class="case-name">SPRING</div>
-                    <div class="case-price">0.9 TON</div>
-                </div>
-                <div class="case-card">
-                    <img src="https://via.placeholder.com/150x100/1c1f2e/fff?text=ELITE" alt="">
-                    <div class="case-name">ELITE</div>
-                    <div class="case-price">5.0 TON</div>
-                </div>
-                <div class="case-card">
-                    <img src="https://via.placeholder.com/150x100/1c1f2e/fff?text=PROMO" alt="">
-                    <div class="case-name">PROMO</div>
-                    <div class="case-price">FREE</div>
-                </div>
-            </div>
-        </div>
-
-        <div id="deposit-screen" class="screen">
-            <div class="section-title">Метод оплаты</div>
-            <div class="section-block" onclick="alert('Адрес: UQA497cKZr3vw-Dkb7HY306QGcYCMBQ1NDTVAmzf0TBytOsV')">
-                <div style="display:flex; justify-content:space-between;">
-                    <span>💎 TON Coin</span>
-                    <span style="color:var(--accent-blue)">Выбрать</span>
-                </div>
-            </div>
-            <div class="section-block">
-                <div style="display:flex; justify-content:space-between;">
-                    <span>⭐ Stars</span>
-                    <span style="color:var(--text-gray)">21 день заморозка</span>
-                </div>
+            <div class="menu-item">
+                <div class="menu-item-left">🌐 Сменить язык</div>
+                <div style="display:flex; align-items:center; gap:8px; color: var(--text-gray);">RU →</div>
             </div>
         </div>
     </div>
 
-    <div class="nav-menu">
-        <div class="nav-item" onclick="showScreen('cases')">
-            <span class="nav-icon">🎮</span> Кейсы
-        </div>
-        <div class="nav-item" onclick="showScreen('bonuses')">
-            <span class="nav-icon">🎁</span> Бонусы
-        </div>
-        <div class="nav-item active" id="nav-profile" onclick="showScreen('profile')">
-            <span class="nav-icon">👤</span> Профиль
+    <div id="screen-top" class="screens">
+        <div class="header"><div class="screen-title" style="font-weight:700; font-size:20px;">🏆 Топ игроков</div></div>
+    </div>
+    <div id="screen-cases" class="screens">
+        <div class="header"><div class="screen-title" style="font-weight:700; font-size:20px;">📦 Кейсы</div></div>
+    </div>
+
+    <div class="navbar">
+        <div class="nav-item" onclick="showScreen('top')"><span class="nav-icon">🏆</span>Топ</div>
+        <div class="nav-item" onclick="showScreen('cases')"><span class="nav-icon">📦</span>Кейсы</div>
+        <div class="nav-item active" id="nav-profile" onclick="showScreen('profile')"><span class="nav-icon">👤</span>Профиль</div>
+    </div>
+
+    <div class="modal" id="pay-modal">
+        <div class="modal-content">
+            <div style="font-size: 32px; margin-bottom: 12px;">💸</div>
+            <h3 style="margin: 0; font-size: 20px;">Выбор метода</h3>
+            <p style="color: var(--text-gray); font-size: 13px; margin: 8px 0 16px 0;">Автоматическое зачисление баланса</p>
+            
+            <div class="method-item" onclick="payWithStars()">
+                <div class="icon stars-icon">⭐</div>
+                <div style="text-align:left;">
+                    <div style="font-weight:600;">Telegram Stars</div>
+                    <div style="font-size:12px; color: var(--text-gray);">Мгновенно, комиссии нет</div>
+                </div>
+            </div>
+
+            <div class="method-item" onclick="copyTonWallet()">
+                <div class="icon ton-icon">💎</div>
+                <div style="text-align:left;">
+                    <div style="font-weight:600;">TON Coin</div>
+                    <div style="font-size:12px; color: var(--text-gray);">UQA497...yOsV (нажми скопировать)</div>
+                </div>
+            </div>
+            
+            <button class="btn btn-gray" style="margin-top: 18px; width: 100%;" onclick="closeModal()">Отмена</button>
         </div>
     </div>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
-        tg.headerColor = "#05060e";
+        tg.headerColor = "#0d0d12";
 
         // Получаем данные юзера
         const user = tg.initDataUnsafe?.user;
         if (user) {
-            document.getElementById('top-username').innerText = user.first_name;
-            document.getElementById('full-name').innerText = user.first_name + (user.last_name ? ' ' + user.last_name : '');
+            document.getElementById('user-username').innerText = (user.username ? '@' + user.username : user.first_name);
             if (user.photo_url) {
                 document.getElementById('user-avatar').src = user.photo_url;
             } else {
-                document.getElementById('user-avatar').src = "https://ui-avatars.com/api/?name=" + user.first_name + "&background=3b82f6&color=fff";
+                document.getElementById('user-avatar').src = `https://ui-avatars.com/api/?name=${user.first_name}&background=3b82f6&color=fff&rounded=true&bold=true`;
             }
         }
 
         function showScreen(name) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active-screen'));
+            document.querySelectorAll('.screens').forEach(s => s.classList.remove('screen-active'));
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.getElementById('screen-'+name).classList.add('screen-active');
+            if(name === 'profile') document.getElementById('nav-profile').classList.add('active');
+        }
 
-            if(name === 'profile') {
-                document.getElementById('profile-screen').classList.add('active-screen');
-                document.getElementById('nav-profile').classList.add('active');
-            } else if(name === 'cases') {
-                document.getElementById('cases-screen').classList.add('active-screen');
-                document.querySelectorAll('.nav-item')[0].classList.add('active');
-            } else if(name === 'deposit') {
-                document.getElementById('deposit-screen').classList.add('active-screen');
-            }
+        const modal = document.getElementById('pay-modal');
+        function openModal() { modal.classList.add('open'); }
+        function closeModal() { modal.classList.remove('open'); }
+
+        // АВТОМАТ STARS: Шлем боту запрос на инвойс
+        function payWithStars() {
+            tg.sendData("pay_stars");
+            closeModal();
+            tg.close(); // Временно закрываем апп, чтобы бот прислал инвойс
+        }
+
+        // ТОН: Красивое копирование кошелька
+        function copyTonWallet() {
+            const addr = "UQA497cKZr3vw-Dkb7HY306QGcYCMBQ1NDTVAmzf0TBytOsV";
+            navigator.clipboard.writeText(addr);
+            tg.showAlert("Адрес скопирован! Баланс будет зачислен вручную (бонус за TON)");
+            closeModal();
         }
     </script>
 </body>
