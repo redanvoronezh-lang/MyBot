@@ -1,41 +1,35 @@
 import asyncio
-from aiogram import Bot, Dispatcher, types, F
-from aiogram.filters import Command
-from aiogram.types import WebAppInfo, PreCheckoutQuery, LabeledPrice
+from aiogram import Bot, Dispatcher, types
+from aiogram.filters import CommandStart
+from aiogram.types import WebAppInfo
 
-TOKEN = '8671015752:AAEsttbvnv698gP3D3vO0TtkkrZCovSU2uY'
-APP_URL = 'https://redanvoronezh-lang.github.io/MyBot/'
-
+# Твой токен и инициализация
+TOKEN = "8671015752:AAEsttbvnv698gP3D3vO0TtkkrZCovSU2uY"
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
-@dp.message(Command("start"))
+@dp.message(CommandStart())
 async def start(message: types.Message):
-    markup = types.ReplyKeyboardMarkup(
-        keyboard=[[types.KeyboardButton(text="🎁 Открыть LapiGift", web_app=WebAppInfo(url=APP_URL))]],
-        resize_keyboard=True
+    # Кнопки
+    kb = [
+        [types.InlineKeyboardButton(text="🚀 Играть", web_app=WebAppInfo(url="https://redanvoronezh-lang.github.io/MyBot/"))],
+        [types.InlineKeyboardButton(text="📢 Канал", url="https://t.me/LapiGift")],
+        [types.InlineKeyboardButton(text="🎧 Поддержка", url="https://t.me/LapiGift_sup_bot")]
+    ]
+    markup = types.InlineKeyboardMarkup(inline_keyboard=kb)
+
+    # Текст сообщения
+    text = (
+        "🎉 Привет, на связи команда **LapiGift** и теперь ты в нашей большой семье! 🎁\n\n"
+        "Открывай кейсы и выигрывай лучшие NFT гифты!\n\n"
+        "💰 Делись своей реферальной ссылкой с друзьями – и за каждого приведённого друга "
+        "который сделает депозит ты получишь 5% от суммы их пополнений!\n"
+        "Заинтересовало?\n\n"
+        "🎁 Хочешь попробовать?\n"
+        "Жми «Играть» и забирай свой приз!"
     )
-    await message.answer(f"Привет, {message.from_user.first_name}!", reply_markup=markup)
 
-@dp.message(F.web_app_data.data == "pay_stars")
-async def create_invoice(message: types.Message):
-    await bot.send_invoice(
-        chat_id=message.chat.id,
-        title="Пополнение",
-        description="Зачисление 10 💎",
-        provider_token="",
-        currency="XTR",
-        prices=[LabeledPrice(label="XTR", amount=10)],
-        payload=f"refill_{message.from_user.id}"
-    )
-
-@dp.pre_checkout_query()
-async def process_pre_checkout(query: PreCheckoutQuery):
-    await bot.answer_pre_checkout_query(query.id, ok=True)
-
-@dp.message(F.successful_payment)
-async def success_pay(message: types.Message):
-    await message.answer(f"✅ Зачислено: {message.successful_payment.total_amount} 💎")
+    await message.answer(text, reply_markup=markup, parse_mode="Markdown")
 
 async def main():
     await dp.start_polling(bot)
